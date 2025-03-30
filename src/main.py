@@ -8,6 +8,9 @@ from huggingface_hub import login
 import warnings
 import logging
 import argparse
+import os
+from collections import defaultdict
+import pandas as pd
 
 from src.plotting import * 
 
@@ -17,7 +20,7 @@ warnings.filterwarnings("ignore", category=UserWarning)
 
 torch.backends.cuda.matmul.allow_tf32 = True
 torch.backends.cudnn.allow_tf32 = True
-SAVE_CACHE = False
+SAVE_CACHE = True
 
 hf_token = "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"
 login(hf_token)
@@ -27,6 +30,7 @@ diarization_dir = "cache/diarization_cache/"
 cache_dir = "cache/transcription_cache/"
 exported_audio_dir = "outputs/exported_audio/"
 csv_files = "outputs/csv_files/"
+figs_dir = "outputs/figs/"
 temp_audio = "tempdata/temp_audio/"
 
 for d in [videos_path, exported_audio_dir, diarization_dir, csv_files, cache_dir, temp_audio, figs_dir]:
@@ -36,7 +40,7 @@ if(len(os.listdir(videos_path)) == 0):
     import gdown
     print("input data is empty downloading video from drive.")
     folder_url = "https://drive.google.com/drive/folders/1clnoqARUaLfR-fC42w8WkwYmCqfZtoN5"
-    gdown.download_folder(folder_url, quiet=False)
+    gdown.download_folder(folder_url, output = "data/gsocvideos", quiet=False)
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 GREEN = "\033[92m"

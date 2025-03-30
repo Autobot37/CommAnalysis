@@ -6,7 +6,6 @@ pyannote.audio  # Speaker diarization
 seaborn  # data visualization  
 networkx  # Graph-based data structures for plotting  
 argparse
-flair #for nlp processing
 transformers
 matplotlib
 pandas
