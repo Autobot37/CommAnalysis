@@ -52,8 +52,8 @@ def load_trans_model():
 
 def load_diar_model():
     from huggingface_hub import login
-    hf_token = "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"
-    login(hf_token, )
+    hf_token = os.getenv("HF_TOKEN")
+    login(hf_token)
     pipeline_model = Pipeline.from_pretrained("pyannote/speaker-diarization-3.1", use_auth_token=hf_token)
     pipeline_model.to(torch.device(device))
     return pipeline_model
