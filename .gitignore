@@ -1,10 +1,10 @@
-tempdata/
-cache/
-data/
-outputs/exported_audio/
+tempdata/*
+cache/*
+data/*
+outputs/exported_audio/*
 __pycache__/
 exp.ipynb
 .vscode/
 .lightning_studio/
 .idea/
-.wget-hsts/
+.wget-hsts
