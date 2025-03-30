@@ -1,0 +1,11 @@
+start,end,text,sentiment,intent
+5,10,Thank  you  for  watching.,Positive,navigation
+20,25,Thank  you.,Positive,navigation
+30,35,We  will  try  this  with  a  bit  of  damage.  These  are  the  ones,Neutral,navigation
+35,40,very  simple.,Neutral,navigation
+40,45,This  is  your  question.  Do  you  want  to  mix  it  a  little,Neutral,navigation
+45,50,bit?  No.  I  am  not  too  sure.,Negative,navigation
+50,55,"It  is  not  good.  I  don't  think  it's  good,  really.",Negative,navigation
+55,60,It  is  thin  and  Summer  City.  I  just  do  it  a  little  bit.  It  can  be  clear.,Positive,navigation
+95,100,Thank  you.,Positive,navigation
+120,125,Thank  you.,Positive,navigation

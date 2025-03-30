@@ -1,0 +1,10 @@
+pydub  # Audio processing   
+faster_whisper  # Fast automatic speech recognition (ASR)  
+torch  # PyTorch deep learning framework  
+transformers  # NLP models   
+pyannote.audio  # Speaker diarization   
+seaborn  # data visualization  
+networkx  # Graph-based data structures for plotting  
+argparse
+flair #for nlp processing
+#!sudo apt install ffmpeg #Audio processing backend

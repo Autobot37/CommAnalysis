@@ -1,0 +1,5 @@
+# HSTS 1.0 Known Hosts database for GNU Wget.
+# Edit at your own risk.
+# <hostname>	<port>	<incl. subdomains>	<created>	<max-age>
+alabama.app.box.com	0	0	1742098500	31536000
+indianinstituteofscience-my.sharepoint.com	0	0	1742554737	31536000
