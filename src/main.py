@@ -16,6 +16,7 @@ warnings.filterwarnings("ignore", category=UserWarning)
 
 torch.backends.cuda.matmul.allow_tf32 = True
 torch.backends.cudnn.allow_tf32 = True
+SAVE_CACHE = False
 
 videos_path = "data/gsocvideos/"
 diarization_dir = "cache/diarization_cache/"
@@ -46,7 +47,7 @@ def load_sent_model():
     return pipeline("sentiment-analysis", model="cardiffnlp/twitter-roberta-base-sentiment-latest", device=0 if device=="cuda" else -1)
 
 def load_trans_model():
-    model_size = "tiny.en"
+    model_size = "small.en"
     return WhisperModel(model_size, device=device, compute_type="float16" if device=="cuda" else "int8")
 
 def load_diar_model():
@@ -55,28 +56,29 @@ def load_diar_model():
     pipeline_model.to(torch.device(device))
     return pipeline_model
 
-def transcribe(_model, audio_path):
+def transcribe(_model, audio_path, save_cache=SAVE_CACHE):
     cache_file = os.path.join(cache_dir, os.path.basename(audio_path) + ".pkl")
-    if os.path.exists(cache_file):
-        with open(cache_file, "rb") as f:
-            return pickle.load(f)
-    segments, _ = _model.transcribe(audio_path, beam_size=2, word_timestamps=False)
+    # if os.path.exists(cache_file):
+    #     with open(cache_file, "rb") as f:
+    #         return pickle.load(f)
+    segments, _ = _model.transcribe(audio_path, beam_size=5, word_timestamps=False)
     text = " ".join([seg.text for seg in segments])
-    with open(cache_file, "wb") as f:
-        pickle.dump(text, f)
+    if save_cache:
+        with open(cache_file, "wb") as f:
+            pickle.dump(text, f)
     return text
 
-def get_diarization(audio_path):
+def get_diarization(audio_path, save_cache=SAVE_CACHE):
     base = os.path.basename(audio_path)
     cache_file = os.path.join(diarization_dir, base + ".pkl")
-    print(cache_file)
     if os.path.exists(cache_file):
         with open(cache_file, "rb") as f:
             return pickle.load(f)
     diar_model = load_diar_model()
     diarization = diar_model(audio_path)
-    with open(cache_file, "wb") as f:
-        pickle.dump(diarization, f)
+    if save_cache:  
+        with open(cache_file, "wb") as f:
+            pickle.dump(diarization, f)
     return diarization
 
 def analyze_sentiment(analyzer, text):

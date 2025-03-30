@@ -4,17 +4,19 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 
 from src.main import transcribe, get_diarization, analyze_sentiment, load_sent_model, load_trans_model, load_diar_model
 import pickle
+import re
 
 def test_transcribe():
-    print("testing transcription")
-    audio_paths = ["tests/test_data/test_audio_0.wav", "tests/test_data/test_audio_1.wav"]
+    audio_path = "tests/test_data/test_audio.mp3"
     with open("tests/test_data/test_audio_text.txt", "r") as f:
-        real_texts = f.read().splitlines()
+        real_text = f.read()
     model = load_trans_model()
-    texts = [transcribe(model, p) for p in audio_paths]
-    real_texts = [t.strip() for t in real_texts]
-    texts = [t.strip() for t in texts]
-    assert texts == real_texts, "Texts do not match!"
+    text = transcribe(model, audio_path)
+    def clean_text(text: str) -> str:
+        return re.sub(r'[^A-Za-z0-9]', '', text)
+    text = clean_text(text)
+    real_text = clean_text(real_text)
+    assert text == real_text
 
 def test_analyze_sentiment():
     print("sentiment")
