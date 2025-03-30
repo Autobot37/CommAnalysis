@@ -24,7 +24,7 @@ exported_audio_dir = "outputs/exported_audio/"
 csv_files = "outputs/csv_files/"
 temp_audio = "tempdata/temp_audio/"
 
-for d in [exported_audio_dir, diarization_dir, csv_files, cache_dir, temp_audio, figs_dir]:
+for d in [videos_path, exported_audio_dir, diarization_dir, csv_files, cache_dir, temp_audio, figs_dir]:
     os.makedirs(d, exist_ok=True)
 
 if(len(os.listdir(videos_path)) == 0):
