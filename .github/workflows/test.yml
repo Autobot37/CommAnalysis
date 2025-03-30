@@ -14,20 +14,18 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4  
+        uses: actions/checkout@v4 
 
-      - name: Install uv
-        run: |
-          curl -LsSf https://astral.sh/uv/install.sh | sh
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
 
-      - name: Install dependencies with uv
+      - name: Install dependencies
         run: |
-          uv venv .venv  
-          source .venv/bin/activate
-          uv pip install -r requirements.txt 
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
       - name: Run Tests
         run: |
-          source .venv/bin/activate
-          pytest --maxfail=2
+          pytest tests/ --maxfail=5 --disable-warnings
