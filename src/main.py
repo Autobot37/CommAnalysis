@@ -51,7 +51,10 @@ def load_trans_model():
     return WhisperModel(model_size, device=device, compute_type="float16" if device=="cuda" else "int8")
 
 def load_diar_model():
-    pipeline_model = Pipeline.from_pretrained("pyannote/speaker-diarization-3.1", use_auth_token="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")
+    from huggingface_hub import login
+    hf_token = "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"
+    login(hf_token, )
+    pipeline_model = Pipeline.from_pretrained("pyannote/speaker-diarization-3.1", use_auth_token=hf_token)
     pipeline_model.to(torch.device(device))
     return pipeline_model
 

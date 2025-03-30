@@ -13,4 +13,5 @@ pandas
 numpy
 streamlit
 pytest
+huggingface_hub
 #!sudo apt install ffmpeg #Audio processing backend
