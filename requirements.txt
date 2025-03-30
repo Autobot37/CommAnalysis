@@ -13,5 +13,4 @@ pandas
 numpy
 streamlit
 pytest
-pickle
 #!sudo apt install ffmpeg #Audio processing backend
