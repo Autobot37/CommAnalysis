@@ -4,6 +4,7 @@ from faster_whisper import WhisperModel
 import pickle
 from transformers import pipeline
 from pydub import AudioSegment
+from huggingface_hub import login
 import warnings
 import logging
 import argparse
@@ -17,6 +18,9 @@ warnings.filterwarnings("ignore", category=UserWarning)
 torch.backends.cuda.matmul.allow_tf32 = True
 torch.backends.cudnn.allow_tf32 = True
 SAVE_CACHE = False
+
+hf_token = "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"
+login(hf_token)
 
 videos_path = "data/gsocvideos/"
 diarization_dir = "cache/diarization_cache/"
@@ -51,9 +55,6 @@ def load_trans_model():
     return WhisperModel(model_size, device=device, compute_type="float16" if device=="cuda" else "int8")
 
 def load_diar_model():
-    from huggingface_hub import login
-    hf_token = "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"
-    login(hf_token)
     pipeline_model = Pipeline.from_pretrained("pyannote/speaker-diarization-3.1", use_auth_token=hf_token)
     pipeline_model.to(torch.device(device))
     return pipeline_model
