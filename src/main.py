@@ -3,22 +3,20 @@ import torch
 from faster_whisper import WhisperModel
 import pickle
 from transformers import pipeline
-import argparse
 from pydub import AudioSegment
-
-from plotting import *
-
 import warnings
 import logging
+import argparse
+
+from src.plotting import * 
 
 logging.getLogger("transformers.modeling_utils").setLevel(logging.ERROR)
 warnings.filterwarnings("ignore", category=FutureWarning)
 warnings.filterwarnings("ignore", category=UserWarning)
-# Enable GPU optimizations
+
 torch.backends.cuda.matmul.allow_tf32 = True
 torch.backends.cudnn.allow_tf32 = True
 
-# Directories
 videos_path = "data/gsocvideos/"
 if(len(os.listdir(videos_path)) == 0):
     import gdown
