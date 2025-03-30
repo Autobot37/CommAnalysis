@@ -51,16 +51,15 @@ def load_trans_model():
     return WhisperModel(model_size, device=device, compute_type="float16" if device=="cuda" else "int8")
 
 def load_diar_model():
-    pipeline_model = Pipeline.from_pretrained("pyannote/speaker-diarization-3.1", 
-                                               use_auth_token="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")
+    pipeline_model = Pipeline.from_pretrained("pyannote/speaker-diarization-3.1", use_auth_token="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")
     pipeline_model.to(torch.device(device))
     return pipeline_model
 
 def transcribe(_model, audio_path, save_cache=SAVE_CACHE):
     cache_file = os.path.join(cache_dir, os.path.basename(audio_path) + ".pkl")
-    # if os.path.exists(cache_file):
-    #     with open(cache_file, "rb") as f:
-    #         return pickle.load(f)
+    if os.path.exists(cache_file):
+        with open(cache_file, "rb") as f:
+            return pickle.load(f)
     segments, _ = _model.transcribe(audio_path, beam_size=5, word_timestamps=False)
     text = " ".join([seg.text for seg in segments])
     if save_cache:
