@@ -14,4 +14,5 @@ streamlit
 pytest
 huggingface_hub
 nltk
+sentence_transformers
 #!sudo apt install ffmpeg #Audio processing backend

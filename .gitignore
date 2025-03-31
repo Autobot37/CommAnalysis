@@ -9,4 +9,5 @@ exp.ipynb
 .idea/
 .wget-hsts
 .lhoste/
-*.pkl
+nltk/
+speaker_segments.pkl
