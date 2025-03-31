@@ -9,3 +9,4 @@ exp.ipynb
 .idea/
 .wget-hsts
 .lhoste/
+*.pkl
