@@ -15,4 +15,5 @@ pytest
 huggingface_hub
 nltk
 sentence_transformers
+gdown
 #!sudo apt install ffmpeg #Audio processing backend
