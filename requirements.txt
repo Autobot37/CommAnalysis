@@ -1,19 +1,18 @@
-pydub  # Audio processing   
-faster_whisper  # Fast automatic speech recognition (ASR)  
-torch  # PyTorch deep learning framework  
-transformers  # NLP models   
-pyannote.audio  # Speaker diarization   
-seaborn  # data visualization  
-networkx  # Graph-based data structures for plotting  
-argparse
-transformers
-matplotlib
-pandas
-numpy
-streamlit
-pytest
-huggingface_hub
-nltk
-sentence_transformers
-gdown
-#!sudo apt install ffmpeg #Audio processing backend
+pydub==0.25.1
+faster_whisper==1.1.0
+torch==2.5.1
+transformers==4.45.2
+pyannote.audio==3.3.2
+seaborn==0.13.2
+networkx==3.4.2
+matplotlib==3.8.2
+pandas==2.2.3
+numpy==1.26.4
+streamlit==1.43.2
+pytest==8.3.5
+huggingface_hub==0.23.2
+nltk==3.9.1
+sentence_transformers==3.1.1
+gdown==5.2.0
+ctranslate2==4.4.0
+#ffmpeg
