@@ -45,18 +45,23 @@ def plot_speaker_timeline(diarization, total_duration):
 def generate_histogram(csv_file):
     df = pd.read_csv(csv_file)
     df['word_count'] = df['text'].apply(lambda x: len(str(x).split()))
-    df['bucket_label'] = df['start'].apply(lambda s: f"{int(s)//60:02d}:{int(s)%60:02d}-{int(s)+5//60:02d}:{(int(s)+5)%60:02d}")
+    df['bucket_label'] = df['start'].apply(lambda s: f"{int(s)//60:02d}:{int(s)%60:02d}-{(int(s)+5)//60:02d}:{(int(s)+5)%60:02d}")
     bar_colors = df['sentiment'].map(sentiment_colors)
     fig, ax = plt.subplots(figsize=(10, 5))
-    ax.bar(df['bucket_label'], df['word_count'], color=bar_colors)
+    ax.bar(range(len(df)), df['word_count'], color=bar_colors)
     ax.set_xlabel("Time Bucket (mm:ss-mm:ss)", fontsize=10)
     ax.set_ylabel("Word Count", fontsize=10)
-    ax.set_title("Word Count per 5-Second Segment", fontsize=11)
-    plt.xticks(rotation=90, fontsize=8)
+    ax.set_title("Word Count", fontsize=11)
+    tick_positions = list(range(0, len(df), 3))
+    tick_labels = [df['bucket_label'].iloc[i] for i in tick_positions]
+    ax.set_xticks(tick_positions)
+    ax.set_xticklabels(tick_labels, rotation=90, fontsize=8)
+    
     patches = [mpatches.Patch(color=sentiment_colors[s], label=s) for s in ["Positive", "Negative", "Neutral"]]
     ax.legend(handles=patches, fontsize=8)
     plt.tight_layout()
     return fig
+
 
 def generate_sentiment_plot(csv_file):
     df = pd.read_csv(csv_file)
@@ -99,7 +104,7 @@ def plot_speaker_heatmap(diarization, total_duration, time_bin_size=5):
                 yticklabels=[f"Speaker {s}" for s in speakers], ax=ax)
     ax.set_xlabel('Time (mm:ss)', fontsize=9)
     ax.set_ylabel('Speakers', fontsize=9)
-    ax.set_title('Speaker Activity Heatmap (5-sec Bins)', fontsize=10)
+    ax.set_title('Speaker Activity Heatmap', fontsize=10)
     ax.set_xticks(np.arange(0, len(x_labels), max(1, len(x_labels) // 20)))
     ax.set_xticklabels(x_labels[::max(1, len(x_labels) // 20)], rotation=45, ha="right", fontsize=8)
     plt.tight_layout()

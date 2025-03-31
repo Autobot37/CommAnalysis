@@ -1,67 +1,65 @@
-start,end,text,sentiment
-5,10,"Okay,  so  the",Neutral
-10,15,drive  you're  going  to  complete  will  use  the  E -Cloudimation  and  the  Object  Detection  System  so  that  means  you  will  not  need,Neutral
-15,20,"to  operate  the  vehicle,  so  keep  your  hands  off  the  steering  wheel  and  feed  off  the  pedals  once  we  get  that  drive.",Neutral
-20,25,"So  when  you  see  that  sim  driver  indicator  highlight  green,  make  sure  you  don't  hit  the  brake  at  any  point  during",Neutral
-25,30,"the  drive.  This  drive,  the  Car  Cab  Lookout  will  have  the  ODS  for  getting  visual",Neutral
-30,35,"feedback  for  targets  that  are  in  the  environment,  so  the  Car  Cab  Lookout  should  pay  attention  to  that  screen  to  aid  them",Neutral
-35,40,when  you're  going  out  to  during  the  mission.  Remember  to  tap  the  targets  on  that  ODS  as  well  as  completing,Neutral
-40,45,those  workstation  tasks.,Neutral
-45,50,"Alright,  so  all  drivers,  put  your  foot  on  the  brake.  Do  not  remove",Neutral
-50,55,"your  foot  from  the  brake  until  I  instruct  you  to  remove  it.  Car  Cab  Driver,  you  may  start",Neutral
-55,60,"the  car.  All  drivers,  with  your  foot  still  on  the  brake,",Neutral
-60,65,you've  been  on  the  brake  and  do  not  start  yet  if  you're  still  on  the  brake.  You  drove  through  me.,Negative
-65,70,Car  Cab  Driver.,Neutral
-75,80,Car  Cab  Driver  and  only  the  Car  Cab,Neutral
-80,85,"Driver?  Yes.  Yeah,  right.  Make  sure  everyone  is  in  drive.",Neutral
-85,90,I  am  now  in  drive.  Car  Cab  Driver  and  only  the  Car  Cab  Driver.,Neutral
-90,95,May  begin  moving  forward.,Neutral
-95,100,As  I  drove  through...  That's  not  drivers  you  may  remove  your  foot.  We,Neutral
-100,105,now  have  Sim  Driver  on.  We're  looking  at  the  person  on  the,Neutral
-105,110,scooter.  A  color  scooter.  A,Neutral
-110,115,"cross  body  bag.  A  cross  body  bag.  Scooter?  Yeah,  it  has  a  cross",Neutral
-115,120,body  bag.,Neutral
-120,125,It's  driving.,Neutral
-125,130,"I  see  scooters  on  both  sides  of  the  road.  Nope,",Neutral
-130,135,"not  this  one.  Yeah,  it's  like  an  electric  scooter.  Ah,",Neutral
-135,140,"yeah,  that's  on  the  left  side  of  the  road.  Yeah,  I  saw  it  on  the  left.  Passing  now.",Neutral
-140,145,"10  o 'clock.  Yeah,  that  was  correct.",Neutral
-150,155,Do  we  have  any  target?  Not  yet.  I  hit,Neutral
-155,160,"target  identified,  but...  Yes,  well.",Neutral
-160,165,Those  motorcyclists  were  giving  me...  There's  never  the  red  car,Negative
-165,170,"that's  kind  of  beat  up.  There's  boxes  on  the  roof.  Pass.  Oh,  I  see  it.  It's  at",Negative
-170,175,"10  o 'clock.  Okay,  yeah,  I'm  on  the  left  side  of  the  box.  I  think  we",Neutral
-175,180,used...  I'm  the  left  side.  Yeah.  Passing  now.  Yep.,Neutral
-180,185,We're  also  passing  now.  Car  one.,Neutral
-185,190,Why  is  car,Negative
-190,195,three  so  far  behind  car  two?  I  don't  know.,Neutral
-195,200,Yeah.,Neutral
-200,205,Okay.,Neutral
-205,210,There's  parking  gap.,Neutral
-210,215,Is  the  ODS  working?,Neutral
-215,220,Yes.  Sometimes  it  has  a  green  button  there  that  says  identified.,Neutral
-220,225,"No,  you  won't  see  anything,  but  Jack  should  see  something  in  the  passenger  seat  if  the  ODS",Neutral
-225,230,is  parking.  There  should  be  a  wide  car  right  now.  A,Neutral
-230,235,"wide  car.  SUV,  like  a  QP.",Neutral
-235,240,I  see,Neutral
-240,245,a  camel.,Neutral
-245,250,And  we  got  cars  coming,Neutral
-250,255,up.  There's  a  driving  white  car  on  the  left.,Neutral
-255,260,Driving  car  on  the  left.  Is  it?,Neutral
-260,265,Passing  now.  I  think  that  was  it.  Yeah.  We  have  another  white,Neutral
-265,270,SUV.  And...  Passing  that  one  on  the  left  now.,Neutral
-280,285,Passing  military  checkpoint.,Neutral
-285,290,"Um...  No,",Neutral
-290,295,it  was  a  truck.  I  know  it  was  a  tent  on  the  truck.,Neutral
-295,300,Yeah.,Neutral
-300,305,Yeah.  Yeah.  No.  No.,Neutral
-310,315,"Jack,  do  you  feel  like  this  has  given",Neutral
-315,320,"you  enough  to  understand,  or  do  you  want  to  continue?  Yeah,  I",Neutral
-320,325,think  it's...  Um...  How  about  you  comment  it?  I  think  it's  enough.,Neutral
-325,330,"I  mean,  I'm  having  fun,  but  we  can  stop  if  you  want  to.  Okay.",Neutral
-330,335,"Yeah,  we  can  kill  it.",Negative
-335,340,Okay.  Commander,Neutral
-340,345,breaking  out.,Neutral
-345,350,Please  don't  run  through  me.  No!,Negative
-350,355,We've  been  rear -ended.  Mm -hmm.,Neutral
-355,360,In  park  now.,Neutral
+start,end,text,sentiment,intent
+5,10,"Okay,  so  the",Neutral,navigation
+5,15,drive  you're  going  to  completely  use  the  E -Cloudimation  and  the  Object  Detection  System  so  that  means  you  will  not  need,Neutral,navigation
+5,20,"to  operate  the  vehicle,  so  keep  your  hands  off  the  steering  wheel  and  feed  off  the  pedals  once  we  get  that  drive.",Neutral,signal_alert
+10,25,"So  when  you  see  that  some  driver  indicator  highlight  green,  make  sure  you  don't  hit  the  brake  at  any  point  during",Neutral,navigation
+15,30,"the  drive.  With  this  drive,  the  Car  Cab  Lookout  will  have  the  ODS  for  getting  visual",Neutral,vehicle_status
+20,35,"feedback  for  targets  that  are  in  the  environment,  so  the  Car  Cab  Lookout  should  pay  attention  to  that  screen  to  aid  them",Neutral,signal_alert
+25,40,when  you're  pointing  out  to  during  the  mission.  Remember  to  tap  the  targets  on  that  ODS  as  well  as  completing,Neutral,navigation
+30,45,those  workstation  tasks.,Neutral,vehicle_status
+35,50,"Alright,  so  all  drivers,  put  your  foot  on  the  brake.  Do  not  remove",Neutral,navigation
+40,55,"your  foot  from  the  brake  until  I  instruct  you  to  remove  it.  Car  Cab  Driver,  you  may  start",Neutral,accident_warning
+45,60,"the  car.  All  drivers,  with  your  foot  still  on  the  brake,",Neutral,accident_warning
+50,65,you've  been  on  the  brake  and  do  not  start  yet  if  you're  put  on  the  brake.  You  drove  through  me.,Neutral,vehicle_status
+55,70,Car  Cab  Driver.,Neutral,vehicle_status
+60,80,Car  Cab  Driver  and  only  the  Car  Cab,Neutral,accident_warning
+65,85,Driver?  Yes.  Make  sure  everyone  doesn't  drive.,Neutral,vehicle_status
+75,90,I  am  now  in  drive.  Car  Cab  Driver  and  only  the  Car  Cab  Driver.,Neutral,vehicle_status
+80,95,Maybe  get  moving  forward.,Neutral,vehicle_status
+85,100,As  I  drove  through...  That's  not  drivers  you  may  remove  your  foot  from  the  brake.  We,Neutral,vehicle_status
+90,105,now  have  Sim  Driver  on.  We're  looking  at  the  person  on  the,Neutral,traffic_update
+95,110,scooter.  One.  What  color  scooter?,Neutral,traffic_update
+100,115,"Cross  body  bag.  Cross  body  bag.  Scooter?  Yeah,  it  has  a  cross",Neutral,vehicle_status
+105,120,body  bag.,Neutral,navigation
+110,125,It's  driving.  I,Neutral,navigation
+115,130,"see  scooters  on  both  sides  of  the  road.  Nope,",Neutral,traffic_update
+120,135,"not  this  one.  Yeah,  it's  like  an  electric  scooter.",Neutral,traffic_update
+125,140,"Ah,  yeah,  that's  on  the  left  side  of  the  road.  Yeah,  I  saw  it  on  the  left.  Passing  now.",Neutral,pedestrian_alert
+130,145,"10  o 'clock.  Yeah,  that  was  practice.",Neutral,vehicle_status
+135,155,Do  we  have  any  target?  Not  yet.  I  hit,Neutral,road_block_alert
+140,160,"target  identified,  but...  Yes,  Paul.",Neutral,signal_alert
+150,165,Those  motorcyclists  were  giving  me  a  car.  A  red  car,Neutral,accident_warning
+155,170,"that's  kind  of  beat  up.  There's  a  box  that's  on  the  roof.  Uh -huh.  Pass.  Oh,  I  see  it.  It's  at",Neutral,vehicle_status
+160,175,"10  o 'clock.  Yeah,  I'm  on  the  left  side.  I  think  we",Neutral,vehicle_status
+165,180,"used...  I'm  the  left  side.  Yeah,  I  saw  the  one  I  got.  Passing  now.  Yep.  Yeah,",Neutral,accident_warning
+170,185,we're  also  passing  now.  Car  one.,Neutral,navigation
+175,190,Why  is  car,Neutral,traffic_update
+180,195,three  so  far  behind  car  two?  I  don't  know.,Neutral,traffic_update
+185,210,So...  There's  a  target  out.,Neutral,vehicle_status
+190,215,Is  the  ODS  working?,Neutral,vehicle_status
+205,220,"Yes.  Sometimes  it  has  a  green  button  there.  It  says  identified.  No,",Neutral,navigation
+210,225,"you  won't  see  anything,  but  Jack  should  see  something  in  the  passenger  seat  if  the  ODS",Neutral,navigation
+215,230,is  parking.  There  should  be  a  wide  car  right  now.  There's  a  green  button  here.,Neutral,signal_alert
+220,235,"A  wide  car.  A  white...  SUV,  like  a  TV,  yeah.  It's  now  we're  looking  at  a  white",Neutral,parking_assistance
+225,240,"stand  or  SUV.  SUV,  yeah.  Yeah,  SUV.",Neutral,parking_assistance
+230,245,I  see  a  camel.,Neutral,vehicle_status
+235,250,Thank  you.  And  we  got  cars  coming,Positive,vehicle_status
+240,255,up.  There's  a  driving  white  car  on  the  left.,Neutral,navigation
+245,260,Passing,Positive,vehicle_status
+250,265,now.  I  think  that  was  it.  We  have  another  white,Neutral,traffic_update
+255,270,"SUV.  And...  Yeah,  passing  that  one  on  the  left  now.",Neutral,vehicle_status
+260,285,Passing  military  checkpoint.,Neutral,vehicle_status
+265,290,"No,",Neutral,vehicle_status
+280,295,it  was  a  truck.  I  know  it  was  a  tent  on  the  truck.,Neutral,navigation
+285,300,Yeah.,Neutral,navigation
+290,305,Yeah.,Neutral,navigation
+295,315,"Jack,  do  you  feel  like  this  has  given",Neutral,navigation
+300,320,"you  enough  to  understand  or  do  you  want  to  continue?  Yeah,  I",Neutral,lane_change
+310,325,think  it's...  How  about  you  commend  it?  I  think  it's  enough.,Neutral,navigation
+315,330,"I  mean,  I'm  having  fun,  but  we  can  stop  if  you  want  to.  Okay.",Neutral,lane_change
+320,335,"Yeah,  we  can  feel  it.  All  right,  so...",Neutral,navigation
+325,340,All  drivers...  Okay.  Commander,Positive,accident_warning
+330,345,breaking  now.,Neutral,traffic_update
+335,350,Please  don't  run  through  me.  No!,Negative,traffic_update
+340,355,We've  been  rear -ended.  Mm -hmm.  Mm -hmm.,Negative,vehicle_status
+345,360,"In  park  now.  Good  job,  team.",Neutral,accident_warning

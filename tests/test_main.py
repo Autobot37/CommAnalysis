@@ -2,7 +2,7 @@ import sys
 import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from src.main import transcribe, get_diarization, analyze_sentiment, load_sent_model, load_trans_model, load_diar_model
+from src.main import load_vader_model, transcribe, get_diarization, analyze_sentiment, load_sent_model, load_trans_model, load_diar_model, analyze_intent, load_intent_model
 import pickle
 import re
 
@@ -20,18 +20,30 @@ def test_transcribe():
 
 def test_analyze_sentiment():
     print("sentiment")
-    model = load_sent_model()
+    tokenizer, cardiff_model = load_sent_model()
+    vader = load_vader_model()
     positive_text = "This is a good example."
     negative_text = "This is a bad example."
     neutral_text = "This is an example."
-    assert analyze_sentiment(model, positive_text) == "Positive"
-    assert analyze_sentiment(model, negative_text) == "Negative"
-    assert analyze_sentiment(model, neutral_text) == "Neutral"
+    assert analyze_sentiment(positive_text,tokenizer,cardiff_model, vader) == "Positive"
+    assert analyze_sentiment(negative_text,tokenizer,cardiff_model, vader) == "Negative"
+    assert analyze_sentiment(neutral_text,tokenizer,cardiff_model, vader) == "Neutral"
 
 def test_get_diarization():
     test_diar_audio_path = "tests/test_data/test_diar_audio.wav"
-    diar = get_diarization(test_diar_audio_path)
+    model = load_diar_model()
+    diar = get_diarization(test_diar_audio_path, model)
     diar_pickle_path = "tests/test_data/diar.pkl"
     with open(diar_pickle_path, "rb") as f:
         real_diarization = pickle.load(f)["diarization"]
     assert len(list(diar.itertracks(yield_label=True))) == len(list(real_diarization.itertracks(yield_label=True)))
+
+def test_intent():
+    intent_labels = ["accident", "navigation"]
+    model = load_intent_model()
+    test_texts = [
+        "There is a collision on the highway with multiple vehicles involved.",
+        "Go to left from here."
+    ]
+    pred = [analyze_intent(model, t, intent_labels) for t in test_texts]
+    assert pred == intent_labels

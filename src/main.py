@@ -2,7 +2,7 @@ from pyannote.audio import Pipeline
 import torch
 from faster_whisper import WhisperModel
 import pickle
-from transformers import pipeline
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from pydub import AudioSegment
 from huggingface_hub import login
 import warnings
@@ -11,9 +11,14 @@ import argparse
 import os
 from collections import defaultdict
 import pandas as pd
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
+from sentence_transformers import CrossEncoder
+import nltk
+import numpy as np
+from tqdm import tqdm
 
 from src.plotting import * 
-
+nltk.download('vader_lexicon')
 logging.getLogger("transformers.modeling_utils").setLevel(logging.ERROR)
 warnings.filterwarnings("ignore", category=FutureWarning)
 warnings.filterwarnings("ignore", category=UserWarning)
@@ -22,7 +27,7 @@ torch.backends.cuda.matmul.allow_tf32 = True
 torch.backends.cudnn.allow_tf32 = True
 SAVE_CACHE = True
 
-hf_token = "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"
+hf_token = "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"
 login(hf_token)
 
 videos_path = "data/gsocvideos/"
@@ -51,8 +56,19 @@ RESET = "\033[0m"
 def print_progress(message, color=GREEN):
     print(f"{color}{message}{RESET}")
 
+def load_intent_model():
+    model = CrossEncoder('cross-encoder/ms-marco-MiniLM-L6-v2')
+    return model
+
 def load_sent_model():
-    return pipeline("sentiment-analysis", model="cardiffnlp/twitter-roberta-base-sentiment-latest", device=0 if device=="cuda" else -1)
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    cardiff_model_name = "cardiffnlp/twitter-roberta-base-sentiment-latest"
+    tokenizer = AutoTokenizer.from_pretrained(cardiff_model_name)
+    cardiff_model = AutoModelForSequenceClassification.from_pretrained(cardiff_model_name).to(device)
+    return tokenizer, cardiff_model
+
+def load_vader_model():
+    return SentimentIntensityAnalyzer()
 
 def load_trans_model():
     model_size = "small.en"
@@ -75,55 +91,185 @@ def transcribe(_model, audio_path, save_cache=SAVE_CACHE):
             pickle.dump(text, f)
     return text
 
-def get_diarization(audio_path, save_cache=SAVE_CACHE):
+def get_diarization(audio_path, diar_model, save_cache=SAVE_CACHE):
     base = os.path.basename(audio_path)
     cache_file = os.path.join(diarization_dir, base + ".pkl")
     if os.path.exists(cache_file):
         with open(cache_file, "rb") as f:
             return pickle.load(f)
-    diar_model = load_diar_model()
     diarization = diar_model(audio_path)
     if save_cache:  
         with open(cache_file, "wb") as f:
             pickle.dump(diarization, f)
     return diarization
 
-def analyze_sentiment(analyzer, text):
-    result = analyzer(text)[0]
-    sentiment_map = {"negative": "Negative", "neutral": "Neutral", "positive": "Positive"}
-    return sentiment_map[result["label"].lower()]
+intent_labels = [
+    "change_speed",
+    "lane_change",
+    "navigation",
+    "traffic_update",
+    "weather_update",
+    "signal_alert",
+    "parking_assistance",
+    "fuel_search",
+    "vehicle_status",
+    "accident_warning",
+    "pedestrian_alert",
+    "road_block_alert"
+]
 
-def FUNCTION1_results(trans_model, audio_path, base_name):
+def analyze_intent(model, text, intent_labels=intent_labels):
+    pairs = [(text, intent) for intent in intent_labels]
+    scores = model.predict(pairs, show_progress_bar=False)
+    confidence_scores = {intent_labels[i]: scores[i] for i in range(len(intent_labels))}
+    predicted_intent = max(confidence_scores.items(), key=lambda x: x[1])[0]
+    return predicted_intent
+
+def get_vader_sent(analyzer, text):
+    scores = analyzer.polarity_scores(text)
+    score_array = np.array([scores["neg"], scores["neu"], scores["pos"]])
+    label = ["Negative", "Neutral", "Positive"][np.argmax(score_array)]
+    return score_array, label
+
+def get_cardiff_sent(tokenizer, cardiff_model, text, max_length=512):
+    tokens = tokenizer.encode(text, add_special_tokens=True)
+    if len(tokens) > max_length:
+        chunked_scores = []
+        for i in range(0, len(tokens), max_length):
+            chunk = tokenizer.decode(tokens[i : i + max_length])
+            inputs = tokenizer(chunk, return_tensors="pt", truncation=True, max_length=512).to(device)
+            outputs = cardiff_model(**inputs)
+            scores = torch.nn.functional.softmax(outputs.logits, dim=-1).detach().cpu().numpy()[0]
+            chunked_scores.append(scores)
+        
+        scores = np.mean(chunked_scores, axis=0)
+    else:
+        inputs = tokenizer(text, return_tensors="pt", truncation=True, max_length = 512).to(device)
+        outputs = cardiff_model(**inputs)
+        scores = torch.nn.functional.softmax(outputs.logits, dim=-1).detach().cpu().numpy()[0]
+    
+    label = ["Negative", "Neutral", "Positive"][np.argmax(scores)]
+    return scores, label
+
+def analyze_sentiment(text, tokenizer, cardiff_model, analyzer, w_card=0.6, w_vader=0.4):
+    c_scores, _ = get_cardiff_sent(tokenizer, cardiff_model, text)
+    v_scores, _ = get_vader_sent(analyzer, text)
+    combined_scores = w_card * c_scores + w_vader * v_scores
+    label = ["Negative", "Neutral", "Positive"][np.argmax(combined_scores)]
+    return label
+
+def chunking_based(segments, tokenizer, cardiff_model, analyzer, intent_model, chunk_time=5, window_size=1):
     rows = []
     current_window_start = 0
-    current_window_end = 5
-    current_text = ""
-    print_progress("[+] transcribing text", BLUE)
-    segments, _ = trans_model.transcribe(audio_path, beam_size=2, word_timestamps=True)
-    print_progress("[+] transcribing completed", GREEN)
-    for segment in segments:
+    current_window_end = chunk_time
+    current_window_text = ""
+    window_history = []
+    
+    segments = list(segments)
+    for segment in tqdm(segments, desc="Processing Segments", bar_format="{l_bar}{bar:30}{r_bar} {n_fmt}/{total_fmt}", colour="cyan"):
         for word in segment.words:
             if word.end <= current_window_end:
-                current_text += " " + word.word
+                current_window_text += " " + word.word
             else:
-                if current_text.strip():
-                    rows.append({
-                        "start": current_window_start,
-                        "end": current_window_end,
-                        "text": current_text.strip(),
-                        "sentiment": analyze_sentiment(sent_model, current_text.strip())
-                    })
+                if current_window_text.strip():
+                    window_history.append((current_window_text.strip(), current_window_start, current_window_end))
+                    
+                    start_index = max(0, len(window_history) - window_size)
+                    context_window = window_history[start_index:]
+                    
+                    combined_text = " ".join([text for text, _, _ in context_window])
+                    context_start = context_window[0][1]
+                    context_end = context_window[-1][2]
+                    
+                    if not rows or rows[-1]["start"] != context_start or rows[-1]["end"] != context_end:
+                        rows.append({
+                            "start": context_start,
+                            "end": context_end,
+                            "text": context_window[-1][0],
+                            "sentiment": analyze_sentiment(combined_text, tokenizer, cardiff_model, analyzer),
+                            "intent": analyze_intent(intent_model, combined_text)
+                        })
+                
                 while word.end > current_window_end:
-                    current_window_start += 5
-                    current_window_end += 5
-                current_text = word.word
-    if current_text.strip():
-        rows.append({
-            "start": current_window_start,
-            "end": current_window_end,
-            "text": current_text.strip(),
-            "sentiment": analyze_sentiment(sent_model, current_text.strip())
-        })
+                    current_window_start += chunk_time
+                    current_window_end += chunk_time
+                
+                current_window_text = word.word
+    
+    if current_window_text.strip():
+        window_history.append((current_window_text.strip(), current_window_start, current_window_end))
+        start_index = max(0, len(window_history) - window_size)
+        context_window = window_history[start_index:]
+        combined_text = " ".join([text for text, _, _ in context_window])
+        context_start = context_window[0][1]
+        context_end = context_window[-1][2]
+        
+        if not rows or rows[-1]["start"] != context_start or rows[-1]["end"] != context_end:
+            rows.append({
+                "start": context_start,
+                "end": context_end,
+                "text": context_window[-1][0],
+                "sentiment": analyze_sentiment(combined_text, tokenizer, cardiff_model, analyzer),
+                "intent": analyze_intent(intent_model, combined_text)
+            })
+    
+    return rows
+
+def sentence_based(segments, tokenizer, cardiff_model, analyzer, intent_model, window_size=1):
+    rows = []
+    current_sentence = ""
+    sentence_start = None
+    accumulated_sentences = []
+    
+    segments = list(segments)
+    for segment in tqdm(segments, desc="Processing Segments", bar_format="{l_bar}{bar:30}{r_bar} {n_fmt}/{total_fmt}", colour="cyan"):
+        for word in segment.words:
+            if sentence_start is None:
+                sentence_start = word.start
+            current_sentence += " " + word.word
+            
+            if word.word.endswith('.'):
+                accumulated_sentences.append((current_sentence.strip(), sentence_start, word.end))
+                current_sentence = ""
+                sentence_start = None
+    
+    if current_sentence.strip():
+        accumulated_sentences.append((current_sentence.strip(), sentence_start, word.end))
+    
+    for i in range(len(accumulated_sentences)):
+        start_index = max(0, i - window_size + 1)
+        context_window = accumulated_sentences[start_index:i+1]
+        
+        combined_text = " ".join([text for text, _, _ in context_window])
+        context_start = context_window[0][1]
+        context_end = context_window[-1][2]
+        
+        if not rows or rows[-1]["start"] != context_start or rows[-1]["end"] != context_end:
+            rows.append({
+                "start": context_start,
+                "end": context_end,
+                "text": context_window[-1][0],  
+                "sentiment": analyze_sentiment(combined_text, tokenizer, cardiff_model, analyzer),
+                "intent": analyze_intent(intent_model, combined_text)
+            })
+    
+    return rows
+
+def FUNCTION1_results(trans_model, audio_path, base_name, tokenizer, cardiff_model, analyzer, intent_model, analysis_type="sentence", window_size=1):
+    """
+    Perform sentiment analysis on transcribed audio.
+    analysis_type: "chunk" for time-based analysis, "sentence" for sentence-based.
+    window_size: Number of previous segments to accumulate.
+    """
+    print_progress("[+] Transcribing text", BLUE)
+    segments, _ = trans_model.transcribe(audio_path, beam_size=2, word_timestamps=True)
+    print_progress("[+] Transcription completed", GREEN)
+
+    if analysis_type == "chunk":
+        rows = chunking_based(segments, tokenizer, cardiff_model, analyzer, intent_model, window_size=window_size)
+    else:
+        rows = sentence_based(segments, tokenizer, cardiff_model, analyzer, intent_model,  window_size=window_size)
+
     df = pd.DataFrame(rows)
     csv_file_path = os.path.join(csv_files, base_name + ".csv")
     df.to_csv(csv_file_path, index=False)
@@ -142,7 +288,7 @@ def compute_speaker_segments(diarization, trans_model, audio_path):
         speaker_segments[speaker].append((turn.start, turn.end, text, "#abcdef"))
     return speaker_segments
 
-def main(videos_folder):
+def main(videos_folder, trans_model, diar_model, tokenizer, cardiff_model, analyzer, intent_model, analysis_type, window_size):
     for vid in os.listdir(videos_folder):
         video_path = os.path.join(videos_folder, vid)
         base_name = os.path.splitext(os.path.basename(video_path))[0]
@@ -151,10 +297,10 @@ def main(videos_folder):
         audio.export(audio_path, format="wav")
         print_progress(f"[+] processing video: {vid}", color=YELLOW)
         print_progress("[+] processing diarization", BLUE)
-        diarization = get_diarization(audio_path)
+        diarization = get_diarization(audio_path, diar_model)
         print_progress("[+] diarization completed", GREEN)
         print_progress("[+] generating csv file with sentiment analysis.", BLUE)
-        csv_file_path = FUNCTION1_results(trans_model, audio_path, base_name)
+        csv_file_path = FUNCTION1_results(trans_model, audio_path, base_name, tokenizer, cardiff_model, analyzer, intent_model, analysis_type = analysis_type, window_size = window_size)
         print_progress("[+] csv file generated", GREEN)
         print_progress("[+] computing speaker segments.", BLUE)
         speaker_segments = compute_speaker_segments(diarization, trans_model, audio_path)
@@ -165,12 +311,17 @@ def main(videos_folder):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Process video files for communication analysis.")
-    parser.add_argument("video_folder", nargs='?', default=videos_path, help="Folder containing video files")
+    parser.add_argument("folder", nargs="?", default=videos_path, help="Folder containing video files")
+    parser.add_argument("--st", type=str, default="chunk", help="Analysis Strategy: 'chunk' or 'sentence'")
+    parser.add_argument("--wsz", type=int, default=1, help="Window size for analysis")
     args = parser.parse_args()
     trans_model = load_trans_model()
     print_progress("[+] transcription model loaded.", GREEN)
     diar_model = load_diar_model()
     print_progress("[+] diarization model loaded.", GREEN)
-    sent_model = load_sent_model()
+    tokenizer, cardiff_model = load_sent_model()
+    analyzer = load_vader_model()
     print_progress("[+] sentiment model loaded.", GREEN)
-    main(args.video_folder)
+    intent_model = load_intent_model()
+    print_progress("[+] intent model loaded.", GREEN)
+    main(args.folder, trans_model, diar_model, tokenizer, cardiff_model, analyzer, intent_model, args.st, args.wsz)
