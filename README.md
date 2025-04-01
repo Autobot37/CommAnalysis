@@ -203,7 +203,7 @@ Logs and `Dashboard Snapshot` can be found here : [Snapshot](https://github.com/
 
 ## Testing
 
-The `tests/` directory contains scripts to verify the functionality of different pipeline components.
+The `tests/` directory contains scripts to verify the functionality of different pipeline components and is automatically verified by github actions..
 * **Test contains:**
     * `test_diarization`: to check if the diarization model correctly identifies speaker segments on sample audio.
     * `test_transcription`: Verifies that the transcription model accurately converts speech in test audio files to text.
