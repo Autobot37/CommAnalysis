@@ -23,6 +23,7 @@ nltk.download('vader_lexicon')
 logging.getLogger("transformers.modeling_utils").setLevel(logging.ERROR)
 warnings.filterwarnings("ignore", category=FutureWarning)
 warnings.filterwarnings("ignore", category=UserWarning)
+logging.getLogger('faster_whisper').setLevel(logging.WARNING)
 
 torch.backends.cuda.matmul.allow_tf32 = True
 torch.backends.cudnn.allow_tf32 = True
@@ -256,7 +257,6 @@ def sentence_based(segments, tokenizer, cardiff_model, analyzer, intent_model, w
 def speaker_wise_text_analysis(speaker_index, speaker_segments, base_name, tokenizer, cardiff_model, analyzer, intent_model, window_size=1):
     rows = []
     contexts = []
-    print(speaker_segments)
     speaker = list(speaker_segments.keys())[speaker_index]
     for conv in tqdm(speaker_segments[speaker], desc="Processing segments for speaker " + speaker):
         contexts.append(conv[2])
@@ -283,7 +283,7 @@ def FUNCTION1_results(trans_model, audio_path, base_name, tokenizer, cardiff_mod
     window_size: Number of previous segments to accumulate.
     """
     print_progress("[+] Transcribing text", BLUE)
-    segments, _ = trans_model.transcribe(audio_path, beam_size=3, word_timestamps=True)
+    segments, _ = trans_model.transcribe(audio_path, beam_size=3, word_timestamps=True, log_progress = True)
 
     if analysis_type == "chunk":
         rows = chunking_based(segments, tokenizer, cardiff_model, analyzer, intent_model, window_size=window_size, chunk_time = chunk_time)

@@ -161,10 +161,10 @@ if process_videos:
     video_files = os.listdir(videos_path)
     progress_bar = st.progress(0)
     for idx, vid in enumerate(video_files):
-        progress_bar.progress((idx + 1) / len(video_files))
-        barv = st.progress(0)
         st.info(f"Processing video: {vid}")
 
+        progress_bar.progress((idx + 1) / len(video_files))
+        barv = st.progress(0)
         barv.progress(1/5, "exporting audio")
         video_path = os.path.join(videos_path, vid)
         base_name = os.path.splitext(os.path.basename(video_path))[0]
@@ -194,7 +194,7 @@ with st.sidebar:
     show_csv = st.button("Show CSV")
     live_audio = st.button("Live Audio Analysis")
 
-if "all_csv_file_path" in st.session_state and st.session_state.all_csv_file_path:
+if "all_csv_file_path" in st.session_state and len(st.session_state.all_csv_file_path) == len(os.listdir("data/gsocvideos")):
     st.info("Videos are processed already.")
     selected_csv = st.selectbox("Select Video Statistics", st.session_state.all_csv_file_path)
     st.session_state.selected_index = st.session_state.all_csv_file_path.index(selected_csv)
@@ -207,9 +207,9 @@ if "all_csv_file_path" in st.session_state and st.session_state.all_csv_file_pat
     len_audio = st.session_state.all_len_audio[idx]
     speakers = st.session_state.speakers[0] + ["all"]
 else:
-    st.info("Please process videos.")
+    st.error("Please process videos first.")
 
-if "speakers" in st.session_state:
+if "speakers" in st.session_state and len(st.session_state.all_csv_file_path) == len(os.listdir("data/gsocvideos")):
     with st.sidebar:
         speaker_choice = st.selectbox("Choose speaker for speaker segments.", speakers)
 
@@ -268,6 +268,4 @@ if live_audio:
             speaker_wise_text_analysis(i, speaker_segments, base_name, tokenizer, sent_model, analyzer, intent_model, window_size)
 
     audio_path = os.path.join(exported_audio_dir, f"{bn}.mp3")
-    with open("speaker_segments.pkl", "rb") as f:
-        speaker_segments = pickle.load(f)
     audio_with_synced_animated_transcript_columns(audio_path, speaker_segments, bn)
