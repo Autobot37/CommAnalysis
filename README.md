@@ -8,6 +8,8 @@ This repository provides a comprehensive pipeline for analyzing audio-visual com
 
 ```
 📦 CommAnalysis/
+|__ 📂 .github/                 # Github actions for testing.
+|__ 📂 .streamlit/              # Streamlit Configuration
 |__ 📂 assets/                  # Containing dashboard and CLI logs pdfs.
 ├── 📂 data/
 │   └── 📂 gsocvideos/          # Input video files (or downloaded samples)
