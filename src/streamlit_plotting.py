@@ -181,7 +181,7 @@ def plot_interaction_network(diarization):
 def plot_total_word_counts(speaker_segments):
     speakers, total_words = [], []
     for speaker, segments in speaker_segments.items():
-        count = sum(len(text.split()) for _, _, text in segments)
+        count = sum(len(text.split()) for _, _, text, _ in segments)
         speakers.append(f"Speaker {speaker}")
         total_words.append(count)
     fig = px.bar(x=speakers, y=total_words, labels={"x": "Speaker", "y": "Total Word Count"},
@@ -191,7 +191,7 @@ def plot_total_word_counts(speaker_segments):
 def plot_average_turn_length(speaker_segments):
     speakers, avg_turn = [], []
     for speaker, segments in speaker_segments.items():
-        lengths = [end - start for start, end, text in segments]
+        lengths = [end - start for start, end, text, _ in segments]
         avg = sum(lengths) / len(lengths) if lengths else 0
         speakers.append(f"Speaker {speaker}")
         avg_turn.append(avg)
@@ -204,7 +204,7 @@ def plot_cumulative_talk_time(speaker_segments, total_duration, bin_size=10):
     bins = np.arange(0, total_duration + bin_size, bin_size)
     cumulative_data = {speaker: np.zeros(len(bins)-1) for speaker in speakers}
     for speaker, segments in speaker_segments.items():
-        for start, end, text in segments:
+        for start, end, text, _ in segments:
             bin_idx_start = np.digitize(start, bins) - 1
             bin_idx_end = np.digitize(end, bins) - 1
             for i in range(bin_idx_start, bin_idx_end+1):
@@ -215,7 +215,6 @@ def plot_cumulative_talk_time(speaker_segments, total_duration, bin_size=10):
                                  mode='lines+markers', name=f"Speaker {speaker}"))
     fig.update_layout(title="Cumulative Talk Time per Speaker", xaxis_title="Time (s)", yaxis_title="Cumulative Talk Time (s)")
     return fig
-
 
 
 import streamlit as st
@@ -233,7 +232,7 @@ def get_audio_data(audio_path):
         st.error(f"Error reading audio file: {e}")
         return None
 
-def audio_with_synced_animated_transcript_columns(audio_path, speaker_segments):
+def audio_with_synced_animated_transcript_columns(audio_path, speaker_segments, base_name):
     audio_data_url = get_audio_data(audio_path)
     if not audio_data_url:
         st.error("No audio data available.")
@@ -242,10 +241,25 @@ def audio_with_synced_animated_transcript_columns(audio_path, speaker_segments):
         st.error("No speaker segments provided.")
         return
 
-    # Predefined colors for speakers
     speaker_colors = ["#FF5733", "#33C1FF", "#9D33FF", "#33FF57", "#FF33A8", "#FFC733"]
+    speaker_data = {}
+    if base_name:
+        for idx,speaker in enumerate(speaker_segments.keys()):
+            csv_path = "outputs/csv_files/" + f"{base_name}_SPEAKER_{idx}.csv"
+            try:
+                if os.path.exists(csv_path):
+                    df = pd.read_csv(csv_path)
+                    speaker_data[speaker] = {
+                        'sentiments': df.get('sentiment', ['neutral']*len(df)).tolist(),
+                        'intents': df.get('intent', ['']*len(df)).tolist()
+                    }
+                else:
+                    st.warning(f"CSV file not found for {speaker}: {csv_path}")
+            except Exception as e:
+                st.warning(f"Could not load CSV data for {speaker}: {str(e)}")
+
     transcript_json = json.dumps(speaker_segments)
-    
+
     html_code = f"""
     <html>
       <head>
@@ -300,6 +314,20 @@ def audio_with_synced_animated_transcript_columns(audio_path, speaker_segments):
             font-weight: 500;
             color: #555;
           }}
+          .positive {{
+            color: #2e7d32;
+          }}
+          .negative {{
+            color: #c62828;
+          }}
+          .neutral {{
+            color: #333;
+          }}
+          .intent {{
+            font-style: italic;
+            color: #666;
+            font-size: 0.9em;
+          }}
         </style>
       </head>
       <body>
@@ -315,57 +343,84 @@ def audio_with_synced_animated_transcript_columns(audio_path, speaker_segments):
         <script>
           var transcript_by_speaker = {transcript_json};
           var speakerColors = {json.dumps(speaker_colors)};
+          var speakerData = {json.dumps(speaker_data)};
+                    
           var speakerContainer = document.getElementById("speaker-container");
           var speakerIndex = 0;
+                    
           for (var speaker in transcript_by_speaker) {{
             var colDiv = document.createElement("div");
             colDiv.className = "speaker-column";
             colDiv.id = "col-" + speaker;
-            
+                        
             var header = document.createElement("div");
             header.className = "speaker-header";
             var color = speakerColors[speakerIndex % speakerColors.length];
             header.style.backgroundColor = color;
             header.innerText = "Speaker: " + speaker;
             colDiv.appendChild(header);
-            
+                        
             transcript_by_speaker[speaker].forEach(function(seg, index) {{
               var segDiv = document.createElement("div");
               segDiv.className = "segment";
               segDiv.id = speaker + "-" + index;
               colDiv.appendChild(segDiv);
             }});
+                        
             speakerContainer.appendChild(colDiv);
             speakerIndex++;
           }}
-
+                    
           var audio = document.getElementById("audioPlayer");
-
+                    
           function updateTranscripts() {{
             var currentTime = audio.currentTime;
+                        
             for (var speaker in transcript_by_speaker) {{
               transcript_by_speaker[speaker].forEach(function(seg, index) {{
                 var segDiv = document.getElementById(speaker + "-" + index);
                 var start = seg[0], end = seg[1], text = seg[2];
+                             
+                var sentimentClass = "neutral";
+                var intentText = "";
+                
+                if (speakerData[speaker]) {{
+                  var sentiments = speakerData[speaker].sentiments || [];
+                  var intents = speakerData[speaker].intents || [];
+                  
+                  if (sentiments[index]) {{
+                    var sentiment = sentiments[index].toString().toLowerCase();
+                    if (sentiment.includes("positive")) sentimentClass = "positive";
+                    else if (sentiment.includes("negative")) sentimentClass = "negative";
+                  }}
+                  
+                  if (intents[index] && intents[index].toString().trim() !== "") {{
+                    intentText = "<span class='intent'>[" + intents[index].toString() + "]</span>";
+                  }}
+                }}
+                
                 if (currentTime >= end) {{
-                  segDiv.innerHTML = "<span class='timestamp' style='color: #888;'>[" + start.toFixed(1) + "-" + end.toFixed(1) + "]</span> " + text;
+                  segDiv.innerHTML = "<span class='timestamp'>[" + start.toFixed(1) + "-" + end.toFixed(1) + "]</span> " +
+                                    "<span class='" + sentimentClass + "'>" + text + "</span> " + intentText;
                 }} else if (currentTime >= start && currentTime < end) {{
                   var segDuration = end - start;
                   var elapsed = currentTime - start;
                   var fraction = elapsed / segDuration;
                   var charsToShow = Math.floor(text.length * fraction);
                   var displayedText = text.substring(0, charsToShow);
-                  segDiv.innerHTML = "<span class='timestamp' style='color: #888;'>[" + start.toFixed(1) + "-" + end.toFixed(1) + "]</span> " + displayedText;
+                                  
+                  segDiv.innerHTML = "<span class='timestamp'>[" + start.toFixed(1) + "-" + end.toFixed(1) + "]</span> " +
+                                    "<span class='" + sentimentClass + "'>" + displayedText + "</span> " + intentText;
                 }} else {{
                   segDiv.innerHTML = "";
                 }}
               }});
             }}
           }}
-
+                    
           audio.addEventListener("timeupdate", updateTranscripts);
         </script>
       </body>
     </html>
     """
-    html(html_code, height=750)
+    html(html_code, height=10000)

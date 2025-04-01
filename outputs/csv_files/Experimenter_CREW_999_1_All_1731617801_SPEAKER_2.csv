@@ -1,0 +1,11 @@
+start,end,text,sentiment,intent
+113.14409375000001,113.93721875000001, scooter,Neutral,pedestrian_alert
+128.77034375,128.87159375000002, you,Neutral,navigation
+128.95596875,130.49159375000002, Nope not this one,Neutral,navigation
+225.93659375000001,228.48471875, It should be a wide car right now.,Neutral,navigation
+231.72471875000002,233.44596875000002," That's the real, like, cute, yeah.",Positive,navigation
+258.60659375,259.31534375, Ahh,Neutral,navigation
+267.76971875000004,268.88346875," Yeah, passing.",Neutral,traffic_update
+319.37346875000003,324.97596875," Yeah, I think it's...  How about you comment it?  I think it's enough.",Neutral,navigation
+328.48596875000004,328.57034375,,Positive,parking_assistance
+328.65471875000003,328.72221875, Thanks for watching!,Positive,navigation

@@ -1,0 +1,45 @@
+start,end,text,sentiment,intent
+19.90971875,20.51721875, Okay.,Positive,accident_warning
+61.62471875000001,61.945343750000006, Oh?,Neutral,navigation
+63.143468750000004,63.17721875,,Positive,parking_assistance
+63.210968750000006,64.59471875, You drove through me.,Neutral,traffic_update
+80.45721875000001,81.26721875," Mm-hmm, yes.",Neutral,navigation
+86.19471875,87.15659375, I am now in drive.,Neutral,vehicle_status
+95.08784375,96.50534375000001, as I drove through.,Neutral,navigation
+98.15909375000001,98.58096875000001, then.,Neutral,navigation
+98.96909375,99.03659375000001, You,Neutral,navigation
+99.69471875,101.07846875000001, We now have SimDriver on.,Neutral,navigation
+119.77596875,120.53534375000001, It's driving.,Neutral,traffic_update
+120.56909375000001,120.97409375000001, out of it.,Neutral,navigation
+125.83409375000001,128.95596875, I see scooters on both sides of the road.,Neutral,navigation
+132.48284375,136.56659375," Ah, motorcycles.  Like an electric scooter.  Ah, yeah, that's on the left side of the road.",Neutral,vehicle_status
+138.67596875,139.35096875000002, Passing now.,Neutral,traffic_update
+151.07909375,151.85534375, Do we have a new target?,Neutral,navigation
+157.10346875000002,157.44096875, Okay.,Positive,accident_warning
+160.95096875000002,164.12346875, Those motorcyclists were giving me the car.,Neutral,vehicle_status
+164.14034375,164.17409375,,Positive,parking_assistance
+167.66721875000002,167.75159375,,Positive,parking_assistance
+167.78534375,167.83596875, You,Neutral,navigation
+167.98784375000002,168.02159375000002,,Positive,parking_assistance
+168.05534375000002,170.63721875000002," Uh, pass. Oh, I see it. It's at 10 o'clock.",Neutral,navigation
+173.84346875,175.02471875, I think he's...,Neutral,navigation
+175.04159375,177.82596875000002," I'm the last one.  I'm the last one.  Yeah, I got it.  All right, fuck.",Negative,navigation
+177.87659375,177.89346875, You,Neutral,navigation
+177.91034375,178.56846875000002, Passing now.,Neutral,traffic_update
+180.18846875,180.86346875, We're also passing.,Neutral,traffic_update
+180.96471875,181.03221875,,Positive,parking_assistance
+181.23471875,181.36971875,,Positive,parking_assistance
+188.99721875,191.69721875000002, Why is car 3 so far behind car 2?,Neutral,navigation
+195.24096875,195.71346875, Yes.,Positive,navigation
+237.81659375,238.17096875000001, You,Neutral,navigation
+242.35596875000002,243.08159375000002, I see a camel.,Neutral,navigation
+248.78534375,256.00784375, We got cars coming up. There's a driving white car on the left,Neutral,vehicle_status
+258.45471875000004,262.36971875, But he's passing now.  I think that was it.  Yeah.,Neutral,lane_change
+262.45409375,269.81159375000004, We have another white SUV and yeah passing that one on the left now,Neutral,vehicle_status
+280.34159375,281.72534375000004, passing military checkpoint.,Neutral,navigation
+325.04346875000005,328.48596875000004," I mean, I'm having fun, but we can stop if you want to.",Positive,navigation
+328.57034375,328.65471875000003,,Positive,parking_assistance
+328.72221875,330.96659375," Okay, shhh.",Neutral,navigation
+338.62784375,340.73721875," OK, commander breaking out.",Neutral,navigation
+348.14534375,350.05221875, Please don't run through me.  No.,Negative,navigation
+351.80721875,356.34659375, We've been rear-ended.  It didn't park.  Uh-huh.  Uh-huh.  End park now.,Negative,parking_assistance

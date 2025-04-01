@@ -1,0 +1,73 @@
+start,end,text,sentiment,intent
+9.46409375,11.185343750000001," Okay, so the drive you're going to complete...",Neutral,vehicle_status
+11.539718750000002,12.14721875, or the least.,Neutral,navigation
+12.552218750000002,19.977218750000002," object detection system, so that means you will not need to operate the vehicle.  You should keep your hands off the steering wheel and feed off the pedals once we get that drive.",Neutral,signal_alert
+20.68596875,25.47846875," So when you see that some driver indicator highlight green, make sure you don't hit the brake at any point during the drive.",Neutral,signal_alert
+26.406593750000003,33.44346875," To this drop, the Car Cab Lookout will have the ODS for getting visual feedback for targets  that are in the environment, so the Car Cab Lookout should pay attention.",Neutral,navigation
+33.56159375,34.91159375, that screen tape them.,Neutral,navigation
+35.31659375,36.36284375, went out during the mission.,Neutral,accident_warning
+37.02096875,39.04596875, Remember to tap the targets on that ODS.,Neutral,navigation
+39.079718750000005,41.13846875, as well as completing those workstation tasks.,Neutral,navigation
+45.88034375,47.90534375," Alright, so all drivers, put your foot on the brake.",Neutral,traffic_update
+49.508468750000006,51.02721875, Do not remove your foot from the brake.,Neutral,accident_warning
+51.06096875,51.38159375, to lunch.,Neutral,navigation
+51.398468750000006,51.92159375, Thank you.  Thank you.  Thank you.,Positive,navigation
+54.31784375,54.40221875, Thanks for watching!,Positive,navigation
+57.47346875,59.78534375, on drivers with your foot still on the brake,Neutral,traffic_update
+61.523468750000006,61.62471875000001,,Positive,parking_assistance
+61.945343750000006,62.24909375, yet.,Neutral,navigation
+62.687843750000006,62.73846875, You,Neutral,navigation
+69.26909375000001,70.01159375, driver.,Neutral,vehicle_status
+75.07409375,75.59721875000001, I never...,Neutral,navigation
+75.88409375,76.27221875000001, Go back.,Neutral,navigation
+77.94284375000001,80.25471875000001, the car cab driver and only the car cab driver.,Neutral,vehicle_status
+81.09846875000001,81.72284375000001," Yeah, right.",Positive,navigation
+82.78596875000001,84.15284375, Make sure everyone is in progress.,Neutral,navigation
+87.34221875,89.95784375000001," Okay, car cab driver and only the car cab driver.",Neutral,vehicle_status
+90.43034375,91.61159375000001, Maybe get moving forward.,Neutral,change_speed
+95.77971875,98.36159375000001, That's top drivers you may remove your phone.,Neutral,traffic_update
+101.78721875000001,105.28034375, We're looking at the purse on the scooter.,Neutral,navigation
+108.58784375,110.52846875, a color skater,Neutral,navigation
+111.08534375,111.91221875000001, cross body pack.,Neutral,navigation
+114.13971875,115.20284375000001," Yeah, that's the first part.",Neutral,navigation
+115.65846875000001,115.97909375, bag.,Neutral,navigation
+119.75909375,119.77596875, You,Neutral,navigation
+130.49159375000002,130.52534375000002, You,Neutral,navigation
+135.60471875000002,136.53284375, on the left side of the road.,Neutral,road_block_alert
+136.56659375,136.63409375, You,Neutral,navigation
+137.57909375,138.86159375," Yeah, I saw the.",Neutral,navigation
+140.98784375,142.38846875000002, How was the practice?,Neutral,navigation
+153.42471875,157.00221875," Not yet. I hit target identified, but...  Yes, ma'am.",Neutral,navigation
+162.77346875,163.46534375000002," Yeah, that's it.",Neutral,navigation
+164.12346875,164.14034375, You,Neutral,navigation
+164.17409375,165.27096875,,Positive,parking_assistance
+165.35534375,165.59159375000002, you,Neutral,navigation
+165.86159375,166.19909375, there's,Neutral,navigation
+167.75159375,167.78534375, You,Neutral,navigation
+167.83596875,168.24096875, Yeah.,Positive,navigation
+168.39284375,169.69221875000002, past,Neutral,navigation
+175.02471875,177.58971875, I'm the best at it.,Positive,navigation
+209.41596875000002,209.46659375000002,,Positive,parking_assistance
+209.63534375,209.82096875000002, Yeah.,Positive,navigation
+212.53784375,213.73596875, Is the ODS working?,Neutral,navigation
+215.01846875,217.26284375," Yes, sometimes it has a green button there.",Neutral,navigation
+217.92096875000001,219.38909375, this identified.,Neutral,vehicle_status
+220.70534375000003,225.59909375," No, you won't see anything but definitely should see something in the passenger seat if the ODS is parked.",Neutral,parking_assistance
+232.60221875000002,233.00721875000002, No.,Negative,navigation
+233.02409375000002,233.32784375000003, Yeah.,Positive,navigation
+233.47971875000002,233.59784375,,Positive,parking_assistance
+233.71596875,233.73284375000003, You,Neutral,navigation
+234.35721875000002,234.89721875, Fight!,Negative,navigation
+235.42034375000003,235.87596875000003, Dan?,Neutral,navigation
+235.90971875000002,238.67721875," or SUV?  SUV, yeah.  Yeah, SUV.",Neutral,vehicle_status
+253.18971875000003,253.86471875, like,Positive,navigation
+255.26534375000003,255.97409375," Yeah, like",Positive,navigation
+256.00784375,256.68284375, car in the lab.,Neutral,vehicle_status
+258.58971875000003,258.60659375, You,Neutral,navigation
+259.31534375,259.34909375, You,Neutral,navigation
+296.08596875,297.35159375, and it's got like a lot of,Neutral,navigation
+313.55159375,316.08284375," Jack, do you feel like this has given you enough to...",Neutral,navigation
+316.20096875,318.14159375, understand or do you want to continue?,Neutral,navigation
+330.96659375,331.50659375000004, feel it.,Neutral,navigation
+331.77659375,338.62784375," Alright, so all drivers will throw the pitcher foot on the brake.",Neutral,traffic_update
+356.97096875,357.66284375000004, job team.,Neutral,navigation

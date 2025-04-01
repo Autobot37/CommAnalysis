@@ -16,6 +16,7 @@ from sentence_transformers import CrossEncoder
 import nltk
 import numpy as np
 from tqdm import tqdm
+import gdown
 
 from src.plotting import * 
 nltk.download('vader_lexicon')
@@ -26,9 +27,6 @@ warnings.filterwarnings("ignore", category=UserWarning)
 torch.backends.cuda.matmul.allow_tf32 = True
 torch.backends.cudnn.allow_tf32 = True
 SAVE_CACHE = True
-
-hf_token = "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"
-login(hf_token)
 
 videos_path = "data/gsocvideos/"
 diarization_dir = "cache/diarization_cache/"
@@ -41,17 +39,13 @@ temp_audio = "tempdata/temp_audio/"
 for d in [videos_path, exported_audio_dir, diarization_dir, csv_files, cache_dir, temp_audio, figs_dir]:
     os.makedirs(d, exist_ok=True)
 
-if(len(os.listdir(videos_path)) == 0):
-    import gdown
-    print("input data is empty downloading video from drive.")
-    folder_url = "https://drive.google.com/drive/folders/1clnoqARUaLfR-fC42w8WkwYmCqfZtoN5"
-    gdown.download_folder(folder_url, output = "data/gsocvideos", quiet=False)
-
+hf_token = "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"
 device = "cuda" if torch.cuda.is_available() else "cpu"
 GREEN = "\033[92m"
 YELLOW = "\033[93m"
 BLUE = "\033[94m"
 RESET = "\033[0m"
+RED = "\033[91m"
 
 def print_progress(message, color=GREEN):
     print(f"{color}{message}{RESET}")
@@ -84,7 +78,7 @@ def transcribe(_model, audio_path, save_cache=SAVE_CACHE):
     if os.path.exists(cache_file):
         with open(cache_file, "rb") as f:
             return pickle.load(f)
-    segments, _ = _model.transcribe(audio_path, beam_size=5, word_timestamps=False)
+    segments, _ = _model.transcribe(audio_path, beam_size=5, word_timestamps=False, )
     text = " ".join([seg.text for seg in segments])
     if save_cache:
         with open(cache_file, "wb") as f:
@@ -166,6 +160,8 @@ def chunking_based(segments, tokenizer, cardiff_model, analyzer, intent_model, c
     window_history = []
     
     segments = list(segments)
+    print_progress("[+] Transcription completed", GREEN)
+
     for segment in tqdm(segments, desc="Processing Segments", bar_format="{l_bar}{bar:30}{r_bar} {n_fmt}/{total_fmt}", colour="cyan"):
         for word in segment.words:
             if word.end <= current_window_end:
@@ -222,6 +218,8 @@ def sentence_based(segments, tokenizer, cardiff_model, analyzer, intent_model, w
     accumulated_sentences = []
     
     segments = list(segments)
+    print_progress("[+] Transcription completed", GREEN)
+
     for segment in tqdm(segments, desc="Processing Segments", bar_format="{l_bar}{bar:30}{r_bar} {n_fmt}/{total_fmt}", colour="cyan"):
         for word in segment.words:
             if sentence_start is None:
@@ -255,18 +253,40 @@ def sentence_based(segments, tokenizer, cardiff_model, analyzer, intent_model, w
     
     return rows
 
-def FUNCTION1_results(trans_model, audio_path, base_name, tokenizer, cardiff_model, analyzer, intent_model, analysis_type="sentence", window_size=1):
+def speaker_wise_text_analysis(speaker_index, speaker_segments, base_name, tokenizer, cardiff_model, analyzer, intent_model, window_size=1):
+    rows = []
+    contexts = []
+    print(speaker_segments)
+    speaker = list(speaker_segments.keys())[speaker_index]
+    for conv in tqdm(speaker_segments[speaker], desc="Processing segments for speaker " + speaker):
+        contexts.append(conv[2])
+        start = max(0, len(contexts) - window_size)
+        aggregated_text = " ".join(contexts[start:])
+        intent = analyze_intent(intent_model, aggregated_text)
+        sentiment = analyze_sentiment(aggregated_text, tokenizer, cardiff_model, analyzer)
+        rows.append({
+            "start": conv[0],
+            "end": conv[1],
+            "text": aggregated_text,
+            "sentiment": sentiment,
+            "intent": intent
+        })
+    df = pd.DataFrame(rows)
+    path = "outputs/csv_files/" + f"{base_name}_SPEAKER_{speaker_index}.csv"
+    df.to_csv(path, index=False)
+    print_progress(f"[+] saved to {path}", GREEN)
+
+def FUNCTION1_results(trans_model, audio_path, base_name, tokenizer, cardiff_model, analyzer, intent_model, analysis_type="sentence", window_size=1, chunk_time = 5):
     """
     Perform sentiment analysis on transcribed audio.
     analysis_type: "chunk" for time-based analysis, "sentence" for sentence-based.
     window_size: Number of previous segments to accumulate.
     """
     print_progress("[+] Transcribing text", BLUE)
-    segments, _ = trans_model.transcribe(audio_path, beam_size=2, word_timestamps=True)
-    print_progress("[+] Transcription completed", GREEN)
+    segments, _ = trans_model.transcribe(audio_path, beam_size=3, word_timestamps=True)
 
     if analysis_type == "chunk":
-        rows = chunking_based(segments, tokenizer, cardiff_model, analyzer, intent_model, window_size=window_size)
+        rows = chunking_based(segments, tokenizer, cardiff_model, analyzer, intent_model, window_size=window_size, chunk_time = chunk_time)
     else:
         rows = sentence_based(segments, tokenizer, cardiff_model, analyzer, intent_model,  window_size=window_size)
 
@@ -288,7 +308,7 @@ def compute_speaker_segments(diarization, trans_model, audio_path):
         speaker_segments[speaker].append((turn.start, turn.end, text, "#abcdef"))
     return speaker_segments
 
-def main(videos_folder, trans_model, diar_model, tokenizer, cardiff_model, analyzer, intent_model, analysis_type, window_size):
+def main(videos_folder, trans_model, diar_model, tokenizer, cardiff_model, analyzer, intent_model, analysis_type, window_size, chunk_time):
     for vid in os.listdir(videos_folder):
         video_path = os.path.join(videos_folder, vid)
         base_name = os.path.splitext(os.path.basename(video_path))[0]
@@ -300,7 +320,7 @@ def main(videos_folder, trans_model, diar_model, tokenizer, cardiff_model, analy
         diarization = get_diarization(audio_path, diar_model)
         print_progress("[+] diarization completed", GREEN)
         print_progress("[+] generating csv file with sentiment analysis.", BLUE)
-        csv_file_path = FUNCTION1_results(trans_model, audio_path, base_name, tokenizer, cardiff_model, analyzer, intent_model, analysis_type = analysis_type, window_size = window_size)
+        csv_file_path = FUNCTION1_results(trans_model, audio_path, base_name, tokenizer, cardiff_model, analyzer, intent_model, analysis_type = analysis_type, window_size = window_size, chunk_time = chunk_time)
         print_progress("[+] csv file generated", GREEN)
         print_progress("[+] computing speaker segments.", BLUE)
         speaker_segments = compute_speaker_segments(diarization, trans_model, audio_path)
@@ -308,13 +328,37 @@ def main(videos_folder, trans_model, diar_model, tokenizer, cardiff_model, analy
         print_progress("[+] plotting figures.", BLUE)
         FUNCTION2_plot_figures(diarization, csv_file_path, len(audio)/1000, trans_model, audio_path, base_name, speaker_segments)
         print_progress("[+] all figures plotted.", GREEN)
+        
+        for i in range(len(list(speaker_segments.keys()))):
+            speaker_wise_text_analysis(i, speaker_segments, base_name, tokenizer, cardiff_model, analyzer, intent_model, window_size)
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Process video files for communication analysis.")
     parser.add_argument("folder", nargs="?", default=videos_path, help="Folder containing video files")
     parser.add_argument("--st", type=str, default="chunk", help="Analysis Strategy: 'chunk' or 'sentence'")
     parser.add_argument("--wsz", type=int, default=1, help="Window size for analysis")
+    parser.add_argument("--gdrive", type=str, default=None, help="Google Drive folder URL for video retrieval")
+    parser.add_argument("--hf_token", type=str, default="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", help="Hugging Face Hub token")
+    parser.add_argument("--ct", type=int, default=5, help="Chunk time in seconds for chunk-based analysis")
+
     args = parser.parse_args()
+    print_progress("[+] logging in hf.", YELLOW)
+    try:
+        login(args.hf_token)
+        hf_token = args.hf_token
+    except:
+        print_progress("change hf token it is expired", RED)
+
+    if args.gdrive:
+        print_progress("downloading gdrive videos", YELLOW)
+        gdown.download_folder(args.gdrive, output = "data/gsocvideos", quiet=False)
+
+    if(len(os.listdir(videos_path)) == 0):
+        print("input data is empty downloading video from drive.")
+        folder_url = "https://drive.google.com/drive/folders/1clnoqARUaLfR-fC42w8WkwYmCqfZtoN5"
+        gdown.download_folder(folder_url, output = "data/gsocvideos", quiet=False)
+
     trans_model = load_trans_model()
     print_progress("[+] transcription model loaded.", GREEN)
     diar_model = load_diar_model()
@@ -324,4 +368,5 @@ if __name__ == '__main__':
     print_progress("[+] sentiment model loaded.", GREEN)
     intent_model = load_intent_model()
     print_progress("[+] intent model loaded.", GREEN)
-    main(args.folder, trans_model, diar_model, tokenizer, cardiff_model, analyzer, intent_model, args.st, args.wsz)
+
+    main(args.folder, trans_model, diar_model, tokenizer, cardiff_model, analyzer, intent_model, args.st, args.wsz, args.ct)

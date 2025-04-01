@@ -1,0 +1,16 @@
+start,end,text,sentiment,intent
+128.75346875,128.77034375, You,Neutral,navigation
+128.87159375000002,128.93909375, You,Neutral,navigation
+194.19471875000002,194.22846875000002,,Positive,parking_assistance
+194.53221875,194.90346875, So.,Neutral,navigation
+227.69159375,229.42971875, right now.,Neutral,navigation
+229.78409375,231.72471875000002, The white kite.,Neutral,navigation
+231.75846875000002,231.89346875, That's it.  Thank you.,Positive,navigation
+233.00721875000002,233.02409375000002, You,Neutral,navigation
+233.44596875000002,233.47971875000002, You,Neutral,navigation
+233.59784375,233.71596875, That's all I have for you today.,Neutral,navigation
+288.49221875,292.44096875," Um, no, no, it's uh, talk.",Neutral,navigation
+292.69409375000004,294.55034375, and always attend while they try.,Neutral,navigation
+298.27971875000003,298.75221875, Yeah.,Positive,navigation
+300.52409375,300.92909375, Yeah.,Positive,navigation
+350.05221875,350.32221875000005,,Positive,parking_assistance
