@@ -114,16 +114,16 @@ Logs will look like this : [View Logs (logs.pdf)](https://github.com/Autobot37/C
     cd commanalysis
     pip install -r requirements.txt
 
-2.  **Prepare Input Data:**
+1.  **Prepare Input Data:**
     * Place your video files inside the `data/gsocvideos/` directory or pass --gdrive in CLI below.
     * If `data/gsocvideos/` is empty when `main.py` or `streamlit_main.py` runs, the script will automatically download sample videos from Google Drive.
-3.  **Make Scripts Executable :**
+2.  **Make Scripts Executable :**
     ```bash
     chmod +x run.sh
     chmod +x run_st.sh
     ```
 
-4. **Run**
+3. **Run**
 ```bash
 ./run.sh [video_folder] [--st strategy] [--wsz window_size] [--ct chunk_time] [--gdrive gdrive_url] [--hf_token token]
 ```
