@@ -105,12 +105,6 @@ This repository provides a comprehensive pipeline for analyzing audio-visual com
     chmod +x run.sh
     ./run.sh
     ```
-  2.  **Run tests:**
-    ```
-    cd commanalysis
-    pytest
-    ```
-
 
 ## Usage by CLI
 
@@ -130,10 +124,10 @@ Logs will look like this : [View Logs (logs.pdf)](https://github.com/Autobot37/C
     ```
 
 4. **Run**
-Any field can be left empty.
 ```bash
 ./run.sh [video_folder] [--st strategy] [--wsz window_size] [--ct chunk_time] [--gdrive gdrive_url] [--hf_token token]
 ```
+Any field can be left empty.
 
 **Arguments:**
 
