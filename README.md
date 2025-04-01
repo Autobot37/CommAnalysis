@@ -106,8 +106,10 @@ This repository provides a comprehensive pipeline for analyzing audio-visual com
     ./run.sh
     ```
   2.  **Run tests:**
+    ```
     cd commanalysis
     pytest
+    ```
 
 
 ## Usage by CLI
@@ -127,10 +129,10 @@ Logs will look like this : [View Logs (logs.pdf)](https://github.com/Autobot37/C
     chmod +x run_st.sh
     ```
 
-4. **Run (`src/main.py`)**
+4. **Run**
 Any field can be left empty.
 ```bash
-python src/main.py [video_folder] [--st strategy] [--wsz window_size] [--ct chunk_time] [--gdrive gdrive_url] [--hf_token token]
+./run.sh [video_folder] [--st strategy] [--wsz window_size] [--ct chunk_time] [--gdrive gdrive_url] [--hf_token token]
 ```
 
 **Arguments:**
@@ -153,15 +155,15 @@ python src/main.py [video_folder] [--st strategy] [--wsz window_size] [--ct chun
 
 * Run with default settings:
     ```bash
-    python src/main.py
+    ./run.sh
     ```
 * Run using 'sentence' strategy and window size 3 on videos in `my_videos/`:
     ```bash
-    python src/main.py my_videos/ --st sentence --wsz 3
+    ./run.sh my_videos/ --st sentence --wsz 3
     ```
 * Run using 'chunk' strategy with 10-second chunks:
     ```bash
-    python src/main.py --st chunk --ct 10
+    ./run.sh --st chunk --ct 10
     ```
 
 ## Usage via Streamlit Web Interface (`run_st.sh`)
