@@ -94,7 +94,6 @@ This repository provides a comprehensive pipeline for analyzing audio-visual com
 * Python 3.10
 * System Dependencies:
     * `ffmpeg`: `sudo apt install ffmpeg`
-* Hugging Face Hub Token: Required to download and use the `pyannote/speaker-diarization-3.1` model.
 
 ## For reproducing current results
 1.  **Run locally:**
