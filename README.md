@@ -4,7 +4,7 @@
 
 This repository provides a comprehensive pipeline for analyzing audio-visual communication data. It processes video files to extract audio, perform speaker diarization (identifying *who* spoke *when*), transcribe the speech for each speaker and the overall conversation, conduct sentiment analysis and intent classification on the transcribed text, and finally, generate a rich set of analytical visualizations and detailed CSV reports.
 
-![Flowchart](assets/flow.png)
+![Flowchart](assets/flowchart.png)
 
 ## Project Structure
 
