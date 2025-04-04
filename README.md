@@ -91,13 +91,13 @@ This repository provides a comprehensive pipeline for analyzing audio-visual com
 
 ## Requirements
 
-* Python 3.x
+* Python 3.10
 * System Dependencies:
-    * `ffmpeg`: Required by `pydub` for audio loading and manipulation from various video formats. (Install via package manager, e.g., `sudo apt install ffmpeg` on Debian/Ubuntu, `brew install ffmpeg` on macOS).
+    * `ffmpeg`: `sudo apt install ffmpeg`
 * Hugging Face Hub Token: Required to download and use the `pyannote/speaker-diarization-3.1` model.
 
 ## For reproducing current results
-1.  **Run main script:**
+1.  **Run locally:**
     ```bash
     git clone https://github.com/autobot37/commanalysis.git
     cd commanalysis
@@ -105,6 +105,9 @@ This repository provides a comprehensive pipeline for analyzing audio-visual com
     chmod +x run.sh
     ./run.sh
     ```
+2. **Run in Colab**:
+
+   [Colab Link](https://colab.research.google.com/drive/1l1VHl7MU1t9oDu4MCK4xaSOIZ7b1Dxud?usp=sharing)
 
 ## Usage by CLI
 
